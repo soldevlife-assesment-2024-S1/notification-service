@@ -51,7 +51,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	amqp := messagestream.NewAmpq(&cfg.MessageStream)
 
 	// Init Subscriber
-	_, err := amqp.NewSubscriber()
+	subscriber, err := amqp.NewSubscriber()
 	if err != nil {
 		logger.Error(ctx, "Failed to create subscriber", err)
 	}
@@ -78,12 +78,24 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 
 	var messageRouters []*message.Router
 
-	// incrementnotificationStock, err := messagestream.NewRouter(publisher, "increment_stock_notification_poisoned", "increment_stock_notification_handler", "increment_stock_notification", subscriber, notificationHandler.IncrementnotificationStock)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to create consume_booking_queue router", err)
-	// }
+	notificationQueue, err := messagestream.NewRouter(publisher, "notification_queue_poisoned", "notification_handler", "notification", subscriber, notificationHandler.NotificationQueue)
 
-	messageRouters = append(messageRouters)
+	if err != nil {
+		logger.Error(ctx, "Failed to create notification_queue router", err)
+	}
+
+	notificationInvoice, err := messagestream.NewRouter(publisher, "notification_invoice_poisoned", "notification_invoice_handler", "notification_invoice", subscriber, notificationHandler.NotificationInvoice)
+	if err != nil {
+		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+	}
+
+	notificationPayment, err := messagestream.NewRouter(publisher, "notification_payment_poisoned", "notification_payment_handler", "notification_payment", subscriber, notificationHandler.NotificationPayment)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+	}
+
+	messageRouters = append(messageRouters, notificationInvoice, notificationPayment, notificationQueue)
 
 	serverHttp := http.SetupHttpEngine()
 

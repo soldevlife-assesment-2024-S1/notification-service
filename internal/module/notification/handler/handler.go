@@ -14,3 +14,15 @@ type NotificationHandler struct {
 	Usecase   usecases.Usecases
 	Publish   message.Publisher
 }
+
+func (h *NotificationHandler) NotificationQueue(msg *message.Message) error {
+	return nil
+}
+
+func (h *NotificationHandler) NotificationInvoice(msg *message.Message) error {
+	return nil
+}
+
+func (h *NotificationHandler) NotificationPayment(msg *message.Message) error {
+	return nil
+}
