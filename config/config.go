@@ -15,6 +15,15 @@ type Config struct {
 	UserService   UserService
 	Database      DatabaseConfig
 	MessageStream MessageStreamConfig
+	Email         EmailConfig
+}
+
+type EmailConfig struct {
+	Server   string `envconfig:"email_server"`
+	SmtpPort string `envconfig:"email_smtp_port"`
+	Username string `envconfig:"email_username"`
+	Password string `envconfig:"email_password"`
+	SkipSSL  bool   `envconfig:"email_skip_ssl"`
 }
 
 type MessageStreamConfig struct {

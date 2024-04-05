@@ -29,3 +29,32 @@ type PoisonedQueue struct {
 	ErrorMsg    string      `json:"error_msg" validate:"required"`
 	Payload     interface{} `json:"payload" validate:"required"`
 }
+
+type NotificationMessage struct {
+	Message        string `json:"message" validate:"required"`
+	EmailRecipient string `json:"email_recipient" validate:"required"`
+}
+
+type NotificationInvoice struct {
+	BookingID         string  `json:"booking_id" validate:"required"`
+	PaymentAmount     float64 `json:"payment_amount" validate:"required"`
+	PaymentExpiration string  `json:"payment_expiration" validate:"required"`
+	EmailRecipient    string  `json:"email_recipient" validate:"required"`
+}
+
+type NotificationPayment struct {
+	BookingID      string `json:"booking_id" validate:"required"`
+	Message        string `json:"message" validate:"required"`
+	PaymentMethod  string `json:"payment_method" validate:"required"`
+	EmailRecipient string `json:"email_recipient" validate:"required"`
+}
+
+type SendEmail struct {
+	EmailAddress string   `json:"email_address" validate:"required"`
+	To           string   `json:"to" validate:"required"`
+	Cc           string   `json:"cc"`
+	Bcc          string   `json:"bcc"`
+	Subject      string   `json:"subject" validate:"required"`
+	Body         string   `json:"body" validate:"required"`
+	Attachments  []string `json:"attachments"`
+}

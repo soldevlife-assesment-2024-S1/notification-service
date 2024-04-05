@@ -63,7 +63,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	}
 
 	notificationRepo := repositories.New(logger, httpClient, redis)
-	notificationUsecase := usecases.New(notificationRepo)
+	notificationUsecase := usecases.New(notificationRepo, &cfg.Email)
 	middleware := middleware.Middleware{
 		Repo: notificationRepo,
 	}
@@ -84,6 +84,12 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create notification_queue router", err)
 	}
 
+	notificationCancel, err := messagestream.NewRouter(publisher, "notification_cancel_poisoned", "notification_cancel_handler", "notification_cancel", subscriber, notificationHandler.NotificationCancel)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+	}
+
 	notificationInvoice, err := messagestream.NewRouter(publisher, "notification_invoice_poisoned", "notification_invoice_handler", "notification_invoice", subscriber, notificationHandler.NotificationInvoice)
 	if err != nil {
 		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
@@ -95,7 +101,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
 	}
 
-	messageRouters = append(messageRouters, notificationInvoice, notificationPayment, notificationQueue)
+	messageRouters = append(messageRouters, notificationInvoice, notificationPayment, notificationQueue, notificationCancel)
 
 	serverHttp := http.SetupHttpEngine()
 
