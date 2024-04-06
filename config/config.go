@@ -13,17 +13,17 @@ type Config struct {
 	HttpClient    HttpClientConfig
 	Logger        LoggerConfig
 	UserService   UserService
-	Database      DatabaseConfig
 	MessageStream MessageStreamConfig
 	Email         EmailConfig
 }
 
 type EmailConfig struct {
-	Server   string `envconfig:"email_server"`
-	SmtpPort string `envconfig:"email_smtp_port"`
-	Username string `envconfig:"email_username"`
-	Password string `envconfig:"email_password"`
-	SkipSSL  bool   `envconfig:"email_skip_ssl"`
+	Server       string `envconfig:"email_server"`
+	SmtpPort     string `envconfig:"email_smtp_port"`
+	Username     string `envconfig:"email_username"`
+	Password     string `envconfig:"email_password"`
+	SkipSSL      bool   `envconfig:"email_skip_ssl"`
+	EmailAddress string `envconfig:"email_address"`
 }
 
 type MessageStreamConfig struct {
@@ -35,19 +35,6 @@ type MessageStreamConfig struct {
 	PublishTopic   string `envconfig:"message_stream_publish_topic"`
 	SubscribeTopic string `envconfig:"message_stream_subscribe_topic"`
 	SSL            bool   `envconfig:"message_stream_ssl"`
-}
-
-type DatabaseConfig struct {
-	Host         string `envconfig:"database_host"`
-	Port         int    `envconfig:"database_port"`
-	Username     string `envconfig:"database_username"`
-	Password     string `envconfig:"database_password"`
-	DBName       string `envconfig:"database_db_name"`
-	SSL          string `envconfig:"database_ssl"`
-	SchemaName   string `envconfig:"database_schema_name"`
-	MaxIdleConns int    `envconfig:"database_max_idle_conns"`
-	MaxOpenConns int    `envconfig:"database_max_open_conns"`
-	Timeout      int    `envconfig:"database_timeout"`
 }
 
 type RedisConfig struct {

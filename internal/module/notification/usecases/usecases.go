@@ -21,11 +21,13 @@ func (u *usecases) NotificationCancel(payload request.NotificationMessage) error
 	}
 
 	specSendEmail := request.SendEmail{
-		EmailAddress: payload.EmailRecipient,
-		To:           templateSendBodyEmail,
+		EmailAddress: u.cfgEmail.EmailAddress,
+		To:           payload.EmailRecipient,
+		Body:         templateSendBodyEmail,
 		Subject:      "Cancel Payment Notification",
 	}
 
+	// send email
 	dial, message := email.InitializeSendEmail(u.cfgEmail)
 	message = email.ComposeEmail(message, &specSendEmail, nil)
 
@@ -33,7 +35,6 @@ func (u *usecases) NotificationCancel(payload request.NotificationMessage) error
 		return err
 	}
 
-	// send email
 	return nil
 }
 
@@ -45,11 +46,13 @@ func (u *usecases) NotificationInvoice(payload request.NotificationInvoice) erro
 	}
 
 	specSendEmail := request.SendEmail{
-		EmailAddress: payload.EmailRecipient,
-		To:           templateSendBodyEmail,
+		EmailAddress: u.cfgEmail.EmailAddress,
+		To:           payload.EmailRecipient,
+		Body:         templateSendBodyEmail,
 		Subject:      "Invoice Notification",
 	}
 
+	// send email
 	dial, message := email.InitializeSendEmail(u.cfgEmail)
 	message = email.ComposeEmail(message, &specSendEmail, nil)
 
@@ -57,7 +60,6 @@ func (u *usecases) NotificationInvoice(payload request.NotificationInvoice) erro
 		return err
 	}
 
-	// send email
 	return nil
 }
 
@@ -69,11 +71,13 @@ func (u *usecases) NotificationPayment(payload request.NotificationPayment) erro
 	}
 
 	specSendEmail := request.SendEmail{
-		EmailAddress: payload.EmailRecipient,
-		To:           templateSendBodyEmail,
+		EmailAddress: u.cfgEmail.EmailAddress,
+		Body:         templateSendBodyEmail,
+		To:           payload.EmailRecipient,
 		Subject:      "Payment Notification",
 	}
 
+	// send email
 	dial, message := email.InitializeSendEmail(u.cfgEmail)
 	message = email.ComposeEmail(message, &specSendEmail, nil)
 
@@ -81,7 +85,6 @@ func (u *usecases) NotificationPayment(payload request.NotificationPayment) erro
 		return err
 	}
 
-	// send email
 	return nil
 }
 
@@ -93,11 +96,13 @@ func (u *usecases) NotificationQueue(payload request.NotificationMessage) error 
 	}
 
 	specSendEmail := request.SendEmail{
-		EmailAddress: payload.EmailRecipient,
-		To:           templateSendBodyEmail,
+		EmailAddress: u.cfgEmail.EmailAddress,
+		To:           payload.EmailRecipient,
+		Body:         templateSendBodyEmail,
 		Subject:      "Queue Notification",
 	}
 
+	// send email
 	dial, message := email.InitializeSendEmail(u.cfgEmail)
 	message = email.ComposeEmail(message, &specSendEmail, nil)
 
@@ -105,7 +110,6 @@ func (u *usecases) NotificationQueue(payload request.NotificationMessage) error 
 		return err
 	}
 
-	// send email
 	return nil
 }
 
