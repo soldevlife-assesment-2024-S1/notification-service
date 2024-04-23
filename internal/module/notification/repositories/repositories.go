@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"notification-service/config"
 	"notification-service/internal/pkg/log"
 
 	"github.com/redis/go-redis/v9"
@@ -9,10 +8,9 @@ import (
 )
 
 type repositories struct {
-	log            log.Logger
-	httpClient     *circuit.HTTPClient
-	cfgUserService *config.UserService
-	redisClient    *redis.Client
+	log         log.Logger
+	httpClient  *circuit.HTTPClient
+	redisClient *redis.Client
 }
 
 type Repositories interface {
