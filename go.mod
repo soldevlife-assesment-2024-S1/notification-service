@@ -9,7 +9,6 @@ require (
 	github.com/go-redsync/redsync/v4 v4.12.1
 	github.com/goccy/go-json v0.10.2
 	github.com/gofiber/fiber/v2 v2.52.4
-	github.com/jmoiron/sqlx v1.3.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/rubyist/circuitbreaker v2.2.1+incompatible
