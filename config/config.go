@@ -15,6 +15,8 @@ type Config struct {
 	UserService   UserService
 	MessageStream MessageStreamConfig
 	Email         EmailConfig
+	ServiceName   string `envconfig:"service_name"`
+	OpenTelemetry OpenTelemetryConfig
 }
 
 type EmailConfig struct {
@@ -76,6 +78,9 @@ type HttpServerConfig struct {
 type LoggerConfig struct {
 	IsVerbose       bool   `envconfig:"logger_is_verbose"`
 	LoggerCollector string `envconfig:"logger_logger_collector"`
+}
+type OpenTelemetryConfig struct {
+	Endpoint string `envconfig:"otel_endpoint"`
 }
 
 func InitConfig() *Config {
