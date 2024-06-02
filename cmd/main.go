@@ -12,6 +12,7 @@ import (
 	log_internal "notification-service/internal/pkg/log"
 	"notification-service/internal/pkg/messagestream"
 	"notification-service/internal/pkg/middleware"
+	"notification-service/internal/pkg/observability"
 	"notification-service/internal/pkg/redis"
 	router "notification-service/internal/route"
 
@@ -104,6 +105,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	messageRouters = append(messageRouters, notificationInvoice, notificationPayment, notificationQueue, notificationCancel)
 
 	serverHttp := http.SetupHttpEngine()
+	observability.InitTracer(cfg)
 
 	r := router.Initialize(serverHttp, &notificationHandler, &middleware)
 
