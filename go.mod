@@ -14,9 +14,12 @@ require (
 	github.com/rubyist/circuitbreaker v2.2.1+incompatible
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.3.0
 	go.opentelemetry.io/otel v1.27.0
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.27.0
 	go.opentelemetry.io/otel/sdk v1.27.0
+	go.opentelemetry.io/otel/sdk/metric v1.27.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.64.0
+	gorm.io/gorm v1.25.10
 )
 
 require (

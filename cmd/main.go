@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"notification-service/config"
 	"notification-service/internal/module/notification/handler"
@@ -19,7 +20,6 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm/logger"
 )
 
 func main() {
@@ -53,13 +53,13 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	// Init Subscriber
 	subscriber, err := amqp.NewSubscriber()
 	if err != nil {
-		logger.Error(ctx, "Failed to create subscriber", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create subscriber: %v", err))
 	}
 
 	// Init Publisher
 	publisher, err := amqp.NewPublisher()
 	if err != nil {
-		logger.Error(ctx, "Failed to create publisher", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create publisher: %v", err))
 	}
 
 	notificationRepo := repositories.New(logZap, httpClient, redis)
@@ -81,30 +81,48 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	notificationQueue, err := messagestream.NewRouter(publisher, "notification_queue_poisoned", "notification_handler", "notification", subscriber, notificationHandler.NotificationQueue)
 
 	if err != nil {
-		logger.Error(ctx, "Failed to create notification_queue router", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create consume_booking_queue router: %v", err))
 	}
 
 	notificationCancel, err := messagestream.NewRouter(publisher, "notification_cancel_poisoned", "notification_cancel_handler", "notification_cancel", subscriber, notificationHandler.NotificationCancel)
 
 	if err != nil {
-		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create consume_booking_queue router: %v", err))
 	}
 
 	notificationInvoice, err := messagestream.NewRouter(publisher, "notification_invoice_poisoned", "notification_invoice_handler", "notification_invoice", subscriber, notificationHandler.NotificationInvoice)
 	if err != nil {
-		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create consume_booking_queue router: %v", err))
 	}
 
 	notificationPayment, err := messagestream.NewRouter(publisher, "notification_payment_poisoned", "notification_payment_handler", "notification_payment", subscriber, notificationHandler.NotificationPayment)
 
 	if err != nil {
-		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+		logZap.Ctx(ctx).Error(fmt.Sprintf("Failed to create consume_booking_queue router: %v", err))
 	}
 
 	messageRouters = append(messageRouters, notificationInvoice, notificationPayment, notificationQueue, notificationCancel)
 
 	serverHttp := http.SetupHttpEngine()
-	observability.InitTracer(cfg)
+	conn, serviceName, err := observability.InitConn(cfg)
+	if err != nil {
+		logZap.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create gRPC connection to collector: %v", err))
+	}
+
+	// setup tracer
+	tracerProvider := observability.InitTracer(conn, serviceName)
+	defer tracerProvider.Shutdown(ctx)
+
+	// setup matrics
+	meterProvider, err := observability.InitMeterProvider(conn, serviceName)
+	if err != nil {
+		logZap.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create meter provider: %v", err))
+	}
+	defer func() {
+		if err := meterProvider(ctx); err != nil {
+			log.Fatalf("failed to shutdown MeterProvider: %s", err)
+		}
+	}()
 
 	r := router.Initialize(serverHttp, &notificationHandler, &middleware)
 
