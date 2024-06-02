@@ -1,14 +1,13 @@
 package repositories
 
 import (
-	"notification-service/internal/pkg/log"
-
 	"github.com/redis/go-redis/v9"
 	circuit "github.com/rubyist/circuitbreaker"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 type repositories struct {
-	log         log.Logger
+	log         *otelzap.Logger
 	httpClient  *circuit.HTTPClient
 	redisClient *redis.Client
 }
@@ -16,7 +15,7 @@ type repositories struct {
 type Repositories interface {
 }
 
-func New(log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client) Repositories {
+func New(log *otelzap.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client) Repositories {
 	return &repositories{
 		log:         log,
 		httpClient:  httpClient,

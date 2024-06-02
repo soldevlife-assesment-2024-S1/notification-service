@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"notification-service/internal/pkg/errors"
-	"notification-service/internal/pkg/log"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 // Result common output
@@ -56,7 +56,7 @@ func getErrorStatusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-func RespSuccess(c *fiber.Ctx, log log.Logger, data interface{}, message string) error {
+func RespSuccess(c *fiber.Ctx, log *otelzap.Logger, data interface{}, message string) error {
 	ip := c.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = c.IP()
@@ -70,7 +70,7 @@ func RespSuccess(c *fiber.Ctx, log log.Logger, data interface{}, message string)
 		Ip:            ip,
 	}
 
-	log.Info(c.Context(), "audit-log", fmt.Sprintf("%+v", meta))
+	log.Ctx(c.UserContext()).Info(fmt.Sprintf("audit-log %+v", meta))
 
 	return c.JSON(response{
 		Meta: MetaResponse{
@@ -81,7 +81,7 @@ func RespSuccess(c *fiber.Ctx, log log.Logger, data interface{}, message string)
 	})
 }
 
-func RespError(c *fiber.Ctx, log log.Logger, err error) error {
+func RespError(c *fiber.Ctx, log *otelzap.Logger, err error) error {
 	ip := c.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = c.IP()
@@ -95,7 +95,7 @@ func RespError(c *fiber.Ctx, log log.Logger, err error) error {
 		ContentLength: int64(c.Request().Header.ContentLength()),
 	}
 
-	log.Info(c.Context(), "audit-log", fmt.Sprintf("%+v", meta))
+	log.Ctx(c.UserContext()).Info(fmt.Sprintf("audit-log %+v", meta))
 
 	return c.Status(getErrorStatusCode(err)).JSON(response{
 		Meta: MetaResponse{
@@ -106,7 +106,7 @@ func RespError(c *fiber.Ctx, log log.Logger, err error) error {
 	})
 }
 
-func RespPagination(c *fiber.Ctx, log log.Logger, data interface{}, metadata MetaPaginationResponse, message string) error {
+func RespPagination(c *fiber.Ctx, log *otelzap.Logger, data interface{}, metadata MetaPaginationResponse, message string) error {
 	ip := c.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = c.IP()
@@ -120,7 +120,7 @@ func RespPagination(c *fiber.Ctx, log log.Logger, data interface{}, metadata Met
 		Ip:            ip,
 	}
 
-	log.Info(c.Context(), "audit-log", fmt.Sprintf("%+v", meta))
+	log.Ctx(c.UserContext()).Info(fmt.Sprintf("audit-log %+v", meta))
 
 	return c.JSON(response{
 		Meta: MetaPaginationResponse{
@@ -135,7 +135,7 @@ func RespPagination(c *fiber.Ctx, log log.Logger, data interface{}, metadata Met
 	})
 }
 
-func RespErrorWithData(c *fiber.Ctx, log log.Logger, data interface{}, err error) error {
+func RespErrorWithData(c *fiber.Ctx, log *otelzap.Logger, data interface{}, err error) error {
 	ip := c.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = c.IP()
@@ -149,7 +149,7 @@ func RespErrorWithData(c *fiber.Ctx, log log.Logger, data interface{}, err error
 		ContentLength: int64(c.Request().Header.ContentLength()),
 	}
 
-	log.Info(c.Context(), "audit-log", fmt.Sprintf("%+v", meta))
+	log.Ctx(c.UserContext()).Info(fmt.Sprintf("audit-log %+v", meta))
 
 	return c.Status(getErrorStatusCode(err)).JSON(response{
 		Meta: MetaResponse{
@@ -160,7 +160,7 @@ func RespErrorWithData(c *fiber.Ctx, log log.Logger, data interface{}, err error
 	})
 }
 
-func RespCustomError(c *fiber.Ctx, log log.Logger, err error) error {
+func RespCustomError(c *fiber.Ctx, log *otelzap.Logger, err error) error {
 	ip := c.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = c.IP()
@@ -174,7 +174,7 @@ func RespCustomError(c *fiber.Ctx, log log.Logger, err error) error {
 		ContentLength: int64(c.Request().Header.ContentLength()),
 	}
 
-	log.Info(c.Context(), "audit-log", fmt.Sprintf("%+v", meta))
+	log.Ctx(c.UserContext()).Info(fmt.Sprintf("audit-log %+v", meta))
 
 	errString, ok := err.(*errors.ErrorString)
 	metaErrorCode := 500

@@ -1,18 +1,19 @@
 package handler
 
 import (
+	"fmt"
 	"notification-service/internal/module/notification/models/request"
 	"notification-service/internal/module/notification/usecases"
-	"notification-service/internal/pkg/log"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-json"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 type NotificationHandler struct {
-	Log       log.Logger
+	Log       *otelzap.Logger
 	Validator *validator.Validate
 	Usecase   usecases.Usecases
 	Publish   message.Publisher
@@ -33,16 +34,16 @@ func (h *NotificationHandler) NotificationQueue(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to unmarshal payload", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to unmarshal payload %v", err))
 		return err
 	}
 
@@ -57,16 +58,16 @@ func (h *NotificationHandler) NotificationQueue(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to process notification queue", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to process notification queue %v", err))
 		return err
 	}
 
@@ -89,16 +90,16 @@ func (h *NotificationHandler) NotificationInvoice(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to unmarshal payload", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to unmarshal payload %v", err))
 		return err
 	}
 
@@ -113,16 +114,16 @@ func (h *NotificationHandler) NotificationInvoice(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to process notification invoice", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to process notification invoice %v", err))
 		return err
 	}
 
@@ -144,16 +145,16 @@ func (h *NotificationHandler) NotificationPayment(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to unmarshal payload", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to unmarshal payload %v", err))
 		return err
 	}
 
@@ -168,16 +169,16 @@ func (h *NotificationHandler) NotificationPayment(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to process notification payment", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to process notification payment %v", err))
 		return err
 	}
 
@@ -199,16 +200,16 @@ func (h *NotificationHandler) NotificationCancel(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to unmarshal payload", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to unmarshal payload %v", err))
 		return err
 	}
 
@@ -223,16 +224,16 @@ func (h *NotificationHandler) NotificationCancel(msg *message.Message) error {
 
 		payload, err := json.Marshal(reqPoisoned)
 		if err != nil {
-			h.Log.Error(msg.Context(), "Failed to marshal payload", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to marshal payload %v", err))
 			return err
 		}
 
 		if err := h.Publish.Publish("poison_queue", message.NewMessage(watermill.NewUUID(), payload)); err != nil {
-			h.Log.Error(msg.Context(), "Failed to publish to poison queue", err)
+			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
 
-		h.Log.Error(msg.Context(), "Failed to process notification cancel", err)
+		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to process notification cancel %v", err))
 		return err
 	}
 

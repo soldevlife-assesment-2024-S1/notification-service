@@ -19,6 +19,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm/logger"
 )
 
 func main() {
@@ -42,9 +43,7 @@ func main() {
 
 func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	redis := redis.SetupClient(&cfg.Redis)
-	logZap := log_internal.SetupLogger()
-	log_internal.Init(logZap)
-	logger := log_internal.GetLogger()
+	logZap := log_internal.Setup()
 	cb := httpclient.InitCircuitBreaker(&cfg.HttpClient, cfg.HttpClient.Type)
 	httpClient := httpclient.InitHttpClient(&cfg.HttpClient, cb)
 	ctx := context.Background()
@@ -63,7 +62,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create publisher", err)
 	}
 
-	notificationRepo := repositories.New(logger, httpClient, redis)
+	notificationRepo := repositories.New(logZap, httpClient, redis)
 	notificationUsecase := usecases.New(notificationRepo, &cfg.Email)
 	middleware := middleware.Middleware{
 		Repo: notificationRepo,
@@ -71,7 +70,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 
 	validator := validator.New()
 	notificationHandler := handler.NotificationHandler{
-		Log:       logger,
+		Log:       logZap,
 		Validator: validator,
 		Usecase:   notificationUsecase,
 		Publish:   publisher,

@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"notification-service/internal/module/notification/repositories"
-	log "notification-service/internal/pkg/log"
+
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 type Middleware struct {
-	Log  log.Logger
+	Log  *otelzap.Logger
 	Repo repositories.Repositories
 }
