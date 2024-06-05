@@ -22,7 +22,7 @@ func (u *usecases) NotificationCancel(payload request.NotificationMessage) error
 
 	specSendEmail := request.SendEmail{
 		EmailAddress: u.cfgEmail.EmailAddress,
-		To:           payload.EmailRecipient,
+		To:           "christian.mahardhika@gmail.com",
 		Body:         templateSendBodyEmail,
 		Subject:      "Cancel Payment Notification",
 	}
@@ -47,7 +47,7 @@ func (u *usecases) NotificationInvoice(payload request.NotificationInvoice) erro
 
 	specSendEmail := request.SendEmail{
 		EmailAddress: u.cfgEmail.EmailAddress,
-		To:           payload.EmailRecipient,
+		To:           "christian.mahardhika@gmail.com",
 		Body:         templateSendBodyEmail,
 		Subject:      "Invoice Notification",
 	}
@@ -73,7 +73,7 @@ func (u *usecases) NotificationPayment(payload request.NotificationPayment) erro
 	specSendEmail := request.SendEmail{
 		EmailAddress: u.cfgEmail.EmailAddress,
 		Body:         templateSendBodyEmail,
-		To:           payload.EmailRecipient,
+		To:           "christian.mahardhika@gmail.com",
 		Subject:      "Payment Notification",
 	}
 
@@ -97,7 +97,7 @@ func (u *usecases) NotificationQueue(payload request.NotificationMessage) error 
 
 	specSendEmail := request.SendEmail{
 		EmailAddress: u.cfgEmail.EmailAddress,
-		To:           payload.EmailRecipient,
+		To:           "christian.mahardhika@gmail.com",
 		Body:         templateSendBodyEmail,
 		Subject:      "Queue Notification",
 	}
