@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"fmt"
 	"notification-service/config"
 	"notification-service/internal/module/notification/models/request"
 	"notification-service/internal/module/notification/repositories"
@@ -42,6 +43,7 @@ func (u *usecases) NotificationCancel(payload request.NotificationMessage) error
 func (u *usecases) NotificationInvoice(payload request.NotificationInvoice) error {
 	templateSendBodyEmail, err := texttemplate.PopulateTemplate(texttemplate.TemplateHtmlInvoice, payload)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
@@ -57,6 +59,7 @@ func (u *usecases) NotificationInvoice(payload request.NotificationInvoice) erro
 	message = email.ComposeEmail(message, &specSendEmail, nil)
 
 	if err := dial.DialAndSend(message); err != nil {
+		fmt.Println(err)
 		return err
 	}
 

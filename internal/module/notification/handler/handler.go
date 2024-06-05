@@ -122,7 +122,7 @@ func (h *NotificationHandler) NotificationInvoice(msg *message.Message) error {
 			h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to publish to poison queue %v", err))
 			return err
 		}
-
+		fmt.Println("Failed to process notification invoice", err)
 		h.Log.Ctx(msg.Context()).Error(fmt.Sprintf("Failed to process notification invoice %v", err))
 		return err
 	}
