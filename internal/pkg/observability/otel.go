@@ -10,9 +10,11 @@ import (
 
 	"go.opentelemetry.io/contrib/instrumentation/host"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
+	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -90,4 +92,19 @@ func InitMeterProvider(conn *grpc.ClientConn, serviceName string) (func(context.
 	}()
 
 	return meterProvider.Shutdown, nil
+}
+
+func InitLogOtel(conn *grpc.ClientConn, serviceName string) {
+	logExporter, err := otlploggrpc.New(context.Background(), otlploggrpc.WithGRPCConn(conn))
+	if err != nil {
+		log.Fatalf("failed to create log exporter: %v", err)
+	}
+	processor := sdklog.NewBatchProcessor(logExporter)
+	sdklog.NewLoggerProvider(
+		sdklog.WithProcessor(processor),
+		sdklog.WithResource(
+			resource.NewWithAttributes(
+				semconv.SchemaURL,
+				semconv.ServiceNameKey.String(serviceName),
+			)))
 }
