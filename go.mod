@@ -79,6 +79,7 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/voi-oss/watermill-opentelemetry v0.1.3
 	go.opentelemetry.io/contrib/instrumentation/host v0.52.0
+	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.3.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.27.0
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
